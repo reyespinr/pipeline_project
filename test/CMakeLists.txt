@@ -1,5 +1,6 @@
 add_executable(test_executable
-  test_example.cpp
+  # test_example.cpp
+  test_alu.cpp
 )
 
 target_link_libraries(test_executable
