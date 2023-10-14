@@ -3,7 +3,7 @@
 #include <bitset>
 #include <cstdint>
 
-class ALU32Bit
+class ALU
 {
 private:
   uint32_t a;
@@ -14,9 +14,7 @@ private:
   bool carry_out_flag;
 
 public:
-  ALU32Bit() : a(0), b(0), alu_ctr(0), zero_flag(false), overflow_flag(false), carry_out_flag(false)
-  {
-  }
+  ALU() : a(0), b(0), alu_ctr(0), zero_flag(false), overflow_flag(false), carry_out_flag(false) {}
 
   auto setInputs(uint32_t a_, uint32_t b_, std::bitset<3> alu_ctr_) -> void
   {
@@ -25,15 +23,23 @@ public:
     alu_ctr = alu_ctr_;
   }
 
-auto performOperation() -> uint32_t
-{
+  auto performOperation() -> uint32_t
+  {
     uint32_t result = 0;
     switch (alu_ctr.to_ulong()) {
       case 0b000:  // Addition
         result = a + b;
+        // Overflow check for addition
+        overflow_flag =
+          ((a & 0x80000000) == (b & 0x80000000)) && ((result & 0x80000000) != (a & 0x80000000));
+        carry_out_flag = result < a;
         break;
       case 0b001:  // Subtraction
         result = a - b;
+        // Overflow check for subtraction
+        overflow_flag =
+          ((a & 0x80000000) != (b & 0x80000000)) && ((result & 0x80000000) == (b & 0x80000000));
+        carry_out_flag = a < b;
         break;
       case 0b010:  // Bitwise AND
         result = a & b;
@@ -41,14 +47,14 @@ auto performOperation() -> uint32_t
       case 0b011:  // Bitwise OR
         result = a | b;
         break;
-      case 0b100:  // Logical left shift
-        result = a << b; // Shift by the value of b
+      case 0b100:         // Logical left shift
+        result = a << b;  // Shift by the value of b
         break;
-      case 0b101:  // Logical right shift
-        result = a >> b; // Shift by the value of b
+      case 0b101:         // Logical right shift
+        result = a >> b;  // Shift by the value of b
         break;
-      case 0b110:  // Arithmetic left shift (similar to logical left shift)
-        result = a << b; // Shift by the value of b
+      case 0b110:         // Arithmetic left shift (similar to logical left shift)
+        result = a << b;  // Shift by the value of b
         break;
       case 0b111:              // Arithmetic right shift
         if (a & 0x80000000) {  // If MSB (sign bit) is 1, it's negative
@@ -63,14 +69,10 @@ auto performOperation() -> uint32_t
         break;
     }
 
-    // Update flags
+    // Update the zero flag
     zero_flag = (result == 0);
-    overflow_flag =
-      false;  // Simple check. More complicated operations will need a more robust check.
-    carry_out_flag = false;  // Placeholder for now, need to handle in addition/subtraction.
-
     return result;
-}
+  }
 
   auto isZero() const -> bool { return zero_flag; }
   auto hasOverflow() const -> bool { return overflow_flag; }
