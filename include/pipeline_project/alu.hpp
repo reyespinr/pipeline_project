@@ -1,5 +1,5 @@
-#ifndef PROJECT_LIBRARY_ALU_HPP
-#define PROJECT_LIBRARY_ALU_HPP
+#ifndef PIPELINE_PROJECT_ALU_HPP
+#define PIPELINE_PROJECT_ALU_HPP
 #include <bitset>
 #include <cstdint>
 
@@ -79,4 +79,4 @@ public:
   auto hasCarryOut() const -> bool { return carry_out_flag; }
 };
 
-#endif  // PROJECT_LIBRARY_ALU_HPP
+#endif  // PIPELINE_PROJECT_ALU_HPP
