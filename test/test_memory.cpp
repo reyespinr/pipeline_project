@@ -50,6 +50,7 @@ TEST_F(TestMemory, WriteAndReadByte)
   ASSERT_EQ(mem.readWord(0), 0xDDCCBBAA);
   ASSERT_EQ(mem.readByte(3), 0xDD);
 }
+
 TEST_F(TestMemory, OutOfBoundsAccess)
 {
   // Assuming default size is 1024 words (4096 bytes)

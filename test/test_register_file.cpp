@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "register_file.hpp"
+#include <pipeline_project/register_file.hpp>
 
 class TestRegisterFile : public ::testing::Test
 {

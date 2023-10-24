@@ -2,6 +2,7 @@ add_executable(test_executable
   # test_example.cpp
   test_alu.cpp
   test_memory.cpp
+  test_register_file.cpp
 )
 
 target_link_libraries(test_executable
