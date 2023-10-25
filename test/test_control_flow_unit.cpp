@@ -2,7 +2,7 @@
 
 #include <pipeline_project/control_flow_unit.hpp>
 
-class ControlFlowUnitTest : public ::testing::Test
+class TestControlFlowUnit : public ::testing::Test
 {
 protected:
   ControlFlowUnit cfu;
@@ -10,7 +10,7 @@ protected:
   void SetUp() override { cfu.reset(); }
 };
 
-TEST_F(ControlFlowUnitTest, BranchConditionTest)
+TEST_F(TestControlFlowUnit, BranchConditionTest)
 {
   cfu.setBranchCondition(true, true);
   EXPECT_TRUE(cfu.shouldBranch());
@@ -22,7 +22,7 @@ TEST_F(ControlFlowUnitTest, BranchConditionTest)
   EXPECT_FALSE(cfu.shouldBranch());
 }
 
-TEST_F(ControlFlowUnitTest, TargetAddressTest)
+TEST_F(TestControlFlowUnit, TargetAddressTest)
 {
   cfu.setTargetAddress(0x1000, 4);
   EXPECT_EQ(cfu.getTargetAddress(), 0x1010);
@@ -31,7 +31,7 @@ TEST_F(ControlFlowUnitTest, TargetAddressTest)
   EXPECT_EQ(cfu.getTargetAddress(), 0x1FF0);
 }
 
-TEST_F(ControlFlowUnitTest, JumpTest)
+TEST_F(TestControlFlowUnit, JumpTest)
 {
   cfu.setJumpTaken(true);
   cfu.setTargetAddress(0x3000, 0, 0x4000);  // Setting jump target to 0x4000
@@ -42,7 +42,7 @@ TEST_F(ControlFlowUnitTest, JumpTest)
   EXPECT_FALSE(cfu.shouldJump());
 }
 
-TEST_F(ControlFlowUnitTest, ResetTest)
+TEST_F(TestControlFlowUnit, ResetTest)
 {
   cfu.setBranchCondition(true, true);
   cfu.setTargetAddress(0x1000, 4);
