@@ -3,6 +3,7 @@ add_executable(test_executable
   test_alu.cpp
   test_memory.cpp
   test_register_file.cpp
+  test_immediate.cpp
 )
 
 target_link_libraries(test_executable
