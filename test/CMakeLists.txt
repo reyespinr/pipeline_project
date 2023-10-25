@@ -4,6 +4,7 @@ add_executable(test_executable
   test_memory.cpp
   test_register_file.cpp
   test_immediate.cpp
+  test_control_flow_unit.cpp
 )
 
 target_link_libraries(test_executable
