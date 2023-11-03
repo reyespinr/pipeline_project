@@ -8,6 +8,7 @@ class ControlUnit
 {
 private:
   std::bitset<6> opcode;
+  std::bitset<6> funct;  // Added for R-type instruction decoding
 
   bool reg_dst;
   bool branch;
@@ -22,9 +23,10 @@ private:
 public:
   ControlUnit()
   : opcode(0),
+    funct(0),  // Initialization for funct
     reg_dst(false),
     branch(false),
-    jump(false),  // added for jump signal
+    jump(false),
     mem_read(false),
     mem_write(false),
     reg_write(false),
@@ -40,10 +42,16 @@ public:
     decode_opcode();
   }
 
+  auto set_funct(std::bitset<6> funct_) -> void
+  {
+    funct = funct_;
+    decode_funct();
+  }
+
   // Getters...
   auto get_reg_dst() const -> bool { return reg_dst; }
   auto get_branch() const -> bool { return branch; }
-  auto get_jump() const -> bool { return jump; }  // added for jump signal
+  auto get_jump() const -> bool { return jump; }
   auto get_mem_read() const -> bool { return mem_read; }
   auto get_mem_write() const -> bool { return mem_write; }
   auto get_reg_write() const -> bool { return reg_write; }
@@ -56,7 +64,7 @@ public:
     // Resetting control signals
     reg_dst = false;
     branch = false;
-    jump = false;  // added for jump reset
+    jump = false;
     mem_read = false;
     mem_write = false;
     reg_write = false;
@@ -65,35 +73,96 @@ public:
     alu_op = 0b000;
 
     switch (opcode.to_ulong()) {
-      case 0b100011:  // lw (load word)
+      case 0x23:  // lw
         mem_read = true;
         reg_write = true;
         mem_to_reg = true;
         alu_src = true;
-        alu_op = 0b000;  // Addition operation for address calculation
+        alu_op = 0b000;
         break;
 
-      case 0b101011:  // sw (store word)
+      case 0x2B:  // sw
         mem_write = true;
         alu_src = true;
-        alu_op = 0b000;  // Addition operation for address calculation
+        alu_op = 0b000;
         break;
 
-      case 0b000100:  // beq (branch if equal)
+      case 0x04:  // beq
         branch = true;
-        alu_op = 0b001;  // Subtraction to compare operands
+        alu_op = 0b001;
         break;
 
-      case 0b000101:  // bne (branch if not equal)
+      case 0x05:  // bne
         branch = true;
-        alu_op = 0b001;  // Subtraction to compare operands
+        alu_op = 0b001;
         break;
 
-      case 0b000010:  // j (jump)
+      case 0x03:  // j or jal
         jump = true;
+        // Further differentiation based on funct may be needed
         break;
 
-        // ... Add more opcodes as needed
+      case 0x00:  // This is the R-type instructions' opcode
+        decode_funct();
+        break;
+
+      default:
+        // NOP or some default action
+        break;
+    }
+  }
+
+  auto decode_funct() -> void
+  {
+    switch (funct.to_ulong()) {
+      case 0x20:  // add
+        reg_dst = true;
+        reg_write = true;
+        alu_op = 0b000;  // addition
+        break;
+
+      case 0x22:  // sub
+        reg_dst = true;
+        reg_write = true;
+        alu_op = 0b001;  // subtraction
+        break;
+
+      case 0x24:  // and
+        reg_dst = true;
+        reg_write = true;
+        alu_op = 0b010;
+        break;
+
+      case 0x25:  // or
+        reg_dst = true;
+        reg_write = true;
+        alu_op = 0b011;
+        break;
+
+      case 0x26:  // xor
+        reg_dst = true;
+        reg_write = true;
+        alu_op = 0b100;
+        break;
+
+      case 0x27:  // nor
+        reg_dst = true;
+        reg_write = true;
+        alu_op = 0b101;
+        break;
+
+      case 0x2A:  // slt
+        reg_dst = true;
+        reg_write = true;
+        alu_op = 0b010;  // set less than
+        break;
+
+      case 0x00:  // sll
+      case 0x02:  // srl
+        reg_dst = true;
+        reg_write = true;
+        // ALU operations for these can be decoded further if required
+        break;
 
       default:
         // NOP or some default action
