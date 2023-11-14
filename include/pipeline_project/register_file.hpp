@@ -39,6 +39,16 @@ public:
       registers[register_number] = value;
     }
   }
+
+  void printRegisterState() const
+  {
+    std::cout << "Register File State:" << std::endl;
+    for (size_t i = 0; i < registers.size(); ++i) {
+      std::cout << "R" << i << ": " << registers[i] << std::endl;
+    }
+  }
+
+  void reset() { std::fill(registers.begin(), registers.end(), 0); }
 };
 
 #endif  // PIPELINE_PROJECT_REGISTER_FILE_HPP

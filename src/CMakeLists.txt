@@ -1,5 +1,5 @@
 add_library(pipeline_project_library
-    example.cpp
+    main.cpp
 )
 
 add_library(pipeline_project ALIAS pipeline_project_library)

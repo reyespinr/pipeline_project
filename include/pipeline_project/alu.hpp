@@ -2,6 +2,7 @@
 #define PIPELINE_PROJECT_ALU_HPP
 #include <bitset>
 #include <cstdint>
+#include <iostream>  // Include for debugging output
 
 class ALU
 {
@@ -21,14 +22,20 @@ public:
     a = a_;
     b = b_;
     alu_ctr = alu_ctr_;
+    // std::cout << "ALU setInputs: a=" << a << ", b=" << b << ", alu_ctr=" << alu_ctr << std::endl;
   }
 
   auto performOperation() -> uint32_t
   {
+    // std::cout << "ALU performOperation called" << std::endl;
     uint32_t result = 0;
+    // std::cout << "ALU Operation: Inputs a=" << a << ", b=" << b
+    //           << ", alu_ctr=" << alu_ctr.to_ulong() << std::endl;
+
     switch (alu_ctr.to_ulong()) {
       case 0b000:  // Addition
         result = a + b;
+        // std::cout << "Performing Addition. Result: " << result << std::endl;
         // Overflow check for addition
         overflow_flag =
           ((a & 0x80000000) == (b & 0x80000000)) && ((result & 0x80000000) != (a & 0x80000000));
@@ -37,6 +44,7 @@ public:
       case 0b001:  // Subtraction
         result = a - b;
         // Overflow check for subtraction
+        // std::cout << "Performing Subtraction. Result: " << result << std::endl;
         overflow_flag =
           ((a & 0x80000000) != (b & 0x80000000)) && ((result & 0x80000000) == (b & 0x80000000));
         carry_out_flag = a < b;
@@ -71,6 +79,7 @@ public:
 
     // Update the zero flag
     zero_flag = (result == 0);
+    // std::cout << "ALU Operation Complete. Zero Flag: " << zero_flag << std::endl;
     return result;
   }
 

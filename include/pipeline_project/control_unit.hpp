@@ -168,6 +168,9 @@ public:
         // NOP or some default action
         break;
     }
+    // std::cout << "Decoded funct: " << funct.to_ulong() << std::endl;
+    // std::cout << "ALU Operation: " << alu_op.to_ulong() << ", reg_write: " << reg_write
+    //           << std::endl;
   }
 };
 

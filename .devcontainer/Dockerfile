@@ -13,6 +13,5 @@ RUN apt update \
     make \
     python3 \
     python3-pip \
-    python3-tk \ # This is for tkinter
-    && pip3 install --no-cache-dir \
+    python3-tk \ 
     && rm -rf /var/lib/apt/lists/*
