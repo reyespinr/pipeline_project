@@ -56,7 +56,7 @@ TEST_F(TestControlUnit, AddTest)
   cu.set_funct(0b100000);   // add
   EXPECT_EQ(cu.get_reg_dst(), true);
   EXPECT_EQ(cu.get_reg_write(), true);
-  EXPECT_EQ(cu.get_alu_op(), 0b000);
+  EXPECT_EQ(cu.get_alu_op(), 0b0010);
 }
 
 TEST_F(TestControlUnit, SubTest)
@@ -65,7 +65,7 @@ TEST_F(TestControlUnit, SubTest)
   cu.set_funct(0b100010);   // sub
   EXPECT_EQ(cu.get_reg_dst(), true);
   EXPECT_EQ(cu.get_reg_write(), true);
-  EXPECT_EQ(cu.get_alu_op(), 0b001);
+  EXPECT_EQ(cu.get_alu_op(), 0b0110);
 }
 
 TEST_F(TestControlUnit, SltTest)
@@ -74,7 +74,7 @@ TEST_F(TestControlUnit, SltTest)
   cu.set_funct(0b101010);   // slt
   EXPECT_EQ(cu.get_reg_dst(), true);
   EXPECT_EQ(cu.get_reg_write(), true);
-  EXPECT_EQ(cu.get_alu_op(), 0b010);
+  EXPECT_EQ(cu.get_alu_op(), 0b0101);
 }
 
 TEST_F(TestControlUnit, AndTest)
@@ -83,7 +83,7 @@ TEST_F(TestControlUnit, AndTest)
   cu.set_funct(0x24);       // funct code for AND
   EXPECT_EQ(cu.get_reg_dst(), true);
   EXPECT_EQ(cu.get_reg_write(), true);
-  EXPECT_EQ(cu.get_alu_op(), 0b010);  // Assume 0b010 is the ALU code for AND
+  EXPECT_EQ(cu.get_alu_op(), 0b0000);  // Assume 0b010 is the ALU code for AND
 }
 
 TEST_F(TestControlUnit, OrTest)
@@ -92,7 +92,7 @@ TEST_F(TestControlUnit, OrTest)
   cu.set_funct(0x25);       // funct code for OR
   EXPECT_EQ(cu.get_reg_dst(), true);
   EXPECT_EQ(cu.get_reg_write(), true);
-  EXPECT_EQ(cu.get_alu_op(), 0b011);  // Assume 0b011 is the ALU code for OR
+  EXPECT_EQ(cu.get_alu_op(), 0b0001);  // Assume 0b011 is the ALU code for OR
 }
 
 TEST_F(TestControlUnit, XorTest)
@@ -101,7 +101,7 @@ TEST_F(TestControlUnit, XorTest)
   cu.set_funct(0x26);       // funct code for XOR
   EXPECT_EQ(cu.get_reg_dst(), true);
   EXPECT_EQ(cu.get_reg_write(), true);
-  EXPECT_EQ(cu.get_alu_op(), 0b100);  // Assume 0b100 is the ALU code for XOR
+  EXPECT_EQ(cu.get_alu_op(), 0b0011);  // Assume 0b100 is the ALU code for XOR
 }
 
 TEST_F(TestControlUnit, NorTest)
@@ -110,5 +110,5 @@ TEST_F(TestControlUnit, NorTest)
   cu.set_funct(0x27);       // funct code for NOR
   EXPECT_EQ(cu.get_reg_dst(), true);
   EXPECT_EQ(cu.get_reg_write(), true);
-  EXPECT_EQ(cu.get_alu_op(), 0b101);  // Assume 0b101 is the ALU code for NOR
+  EXPECT_EQ(cu.get_alu_op(), 0b0100);  // Assume 0b101 is the ALU code for NOR
 }

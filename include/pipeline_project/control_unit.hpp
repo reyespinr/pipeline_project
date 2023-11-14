@@ -18,7 +18,7 @@ private:
   bool reg_write;
   bool mem_to_reg;
   bool alu_src;
-  std::bitset<3> alu_op;
+  std::bitset<4> alu_op;
 
 public:
   ControlUnit()
@@ -57,7 +57,7 @@ public:
   auto get_reg_write() const -> bool { return reg_write; }
   auto get_mem_to_reg() const -> bool { return mem_to_reg; }
   auto get_alu_src() const -> bool { return alu_src; }
-  auto get_alu_op() const -> std::bitset<3> { return alu_op; }
+  auto get_alu_op() const -> std::bitset<4> { return alu_op; }
 
   auto decode_opcode() -> void
   {
@@ -70,7 +70,7 @@ public:
     reg_write = false;
     mem_to_reg = false;
     alu_src = false;
-    alu_op = 0b000;
+    alu_op = 0b0000;
 
     switch (opcode.to_ulong()) {
       case 0x23:  // lw
@@ -118,59 +118,78 @@ public:
       case 0x20:  // add
         reg_dst = true;
         reg_write = true;
-        alu_op = 0b000;  // addition
+        alu_op = 0b0010;  // Unique code for ADD
         break;
 
       case 0x22:  // sub
         reg_dst = true;
         reg_write = true;
-        alu_op = 0b001;  // subtraction
+        alu_op = 0b0110;  // Unique code for SUB
         break;
 
       case 0x24:  // and
         reg_dst = true;
         reg_write = true;
-        alu_op = 0b010;
+        alu_op = 0b0000;  // Unique code for AND
         break;
 
       case 0x25:  // or
         reg_dst = true;
         reg_write = true;
-        alu_op = 0b011;
+        alu_op = 0b0001;  // Unique code for OR
         break;
 
       case 0x26:  // xor
         reg_dst = true;
         reg_write = true;
-        alu_op = 0b100;
+        alu_op = 0b0011;  // Unique code for XOR
         break;
 
       case 0x27:  // nor
         reg_dst = true;
         reg_write = true;
-        alu_op = 0b101;
+        alu_op = 0b0100;  // Unique code for NOR
         break;
 
       case 0x2A:  // slt
         reg_dst = true;
         reg_write = true;
-        alu_op = 0b010;  // set less than
+        alu_op = 0b0101;  // Unique code for SLT
         break;
 
       case 0x00:  // sll
-      case 0x02:  // srl
         reg_dst = true;
         reg_write = true;
-        // ALU operations for these can be decoded further if required
+        alu_src = true;
+        alu_op = 0b0111;  // Unique code for SLL
         break;
 
+      case 0x02:  // srl (shift right logical)
+        reg_dst = true;
+        reg_write = true;
+        alu_src = true;
+        alu_op = 0b1000;  // Unique code for SRL
+        break;
+
+      case 0x03:  // sra (shift right arithmetic)
+        reg_dst = true;
+        reg_write = true;
+        alu_src = true;
+        alu_op = 0b1010;  // New unique code for SRA (assuming 4-bit alu_op)
+        break;
+
+      case 0x04:  // sla (shift left arithmetic)
+        reg_dst = true;
+        reg_write = true;
+        alu_src = true;
+        alu_op = 0b1001;  // New unique code for SRA (assuming 4-bit alu_op)
+        break;
       default:
         // NOP or some default action
         break;
     }
-    // std::cout << "Decoded funct: " << funct.to_ulong() << std::endl;
-    // std::cout << "ALU Operation: " << alu_op.to_ulong() << ", reg_write: " << reg_write
-    //           << std::endl;
+    // std::cout << "Decoded funct: " << funct << std::endl;
+    // std::cout << "ALU Operation: " << alu_op << ", reg_write: " << reg_write << std::endl;
   }
 };
 

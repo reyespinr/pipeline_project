@@ -42,6 +42,13 @@ public:
     // Optionally: Print the final state of registers, memory, etc.
   }
 
+  void executeLine(int n)
+  {
+    decodeAndExecute(machineCode[n]);
+
+    // Optionally: Print the final state of registers, memory, etc.
+  }
+
   RegisterFile & getRegisterFile() { return registerFile; }
 
 private:
@@ -87,33 +94,29 @@ private:
   {
     // std::cout << "Executing R-Type instruction: " << instruction << std::endl;
 
+    // Extracting the fields from the instruction
     std::uint8_t rs = static_cast<std::uint8_t>(std::stoi(instruction.substr(6, 5), nullptr, 2));
     std::uint8_t rt = static_cast<std::uint8_t>(std::stoi(instruction.substr(11, 5), nullptr, 2));
     std::uint8_t rd = static_cast<std::uint8_t>(std::stoi(instruction.substr(16, 5), nullptr, 2));
+    std::uint8_t shamt =
+      static_cast<std::uint8_t>(std::stoi(instruction.substr(21, 5), nullptr, 2));
     std::bitset<6> funct(std::stoi(instruction.substr(26, 6), nullptr, 2));
-
-    // std::cout << "Executing R-Type instruction: " << instruction << std::endl;
-    // std::cout << "Registers: rs=" << static_cast<int>(rs) << ", rt=" << static_cast<int>(rt)
-    //           << ", rd=" << static_cast<int>(rd) << std::endl;
 
     controlUnit.set_funct(funct);
     controlUnit.decode_funct();
 
-    std::uint32_t operand1 = registerFile.read(rs);
-    std::uint32_t operand2 = registerFile.read(rt);
-
-    // std::cout << "Operands: operand1=" << operand1 << ", operand2=" << operand2 << std::endl;
+    // For shift operations, use shamt as the second operand.
+    std::uint32_t operand1 =
+      controlUnit.get_alu_src() ? registerFile.read(rt) : registerFile.read(rs);
+    std::uint32_t operand2 = controlUnit.get_alu_src() ? shamt : registerFile.read(rt);
 
     alu.setInputs(operand1, operand2, controlUnit.get_alu_op());
-    // std::cout << "ALU Control Signals: " << controlUnit.get_alu_op() << std::endl;
-
+    // std::cout << "Going into the ALU: |" << operand1 << " | " << operand2 << " | "
+    //           << controlUnit.get_alu_op() << "\n";
     std::uint32_t result = alu.performOperation();
-
-    // std::cout << "ALU result: " << result << std::endl;
 
     if (controlUnit.get_reg_write()) {
       registerFile.write(rd, result);
-      //   std::cout << "Written to Register " << static_cast<int>(rd) << ": " << result << std::endl;
     }
   }
 
