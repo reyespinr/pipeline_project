@@ -8,6 +8,7 @@ add_executable(test_executable
   test_control_unit.cpp
   test_datapath.cpp
   test_simulator.cpp
+  test_demo.cpp
 )
 
 target_link_libraries(test_executable
