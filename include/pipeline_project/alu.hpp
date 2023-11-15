@@ -1,8 +1,11 @@
 #ifndef PIPELINE_PROJECT_ALU_HPP
 #define PIPELINE_PROJECT_ALU_HPP
 #include <bitset>
+#include <cmath>
 #include <cstdint>
 #include <iostream>  // Include for debugging output
+
+#include "utils.hpp"
 
 class ALU
 {
@@ -13,6 +16,7 @@ private:
   bool zero_flag;
   bool overflow_flag;
   bool carry_out_flag;
+  float p;
 
 public:
   ALU() : a(0), b(0), alu_ctr(0), zero_flag(false), overflow_flag(false), carry_out_flag(false) {}
@@ -21,6 +25,12 @@ public:
   {
     a = a_;
     b = b_;
+    alu_ctr = alu_ctr_;
+  }
+
+  auto setFloatInput(float p_, std::bitset<4> alu_ctr_) -> void
+  {
+    p = p_;
     alu_ctr = alu_ctr_;
   }
 
@@ -74,6 +84,9 @@ public:
           result = a >> b;
         }
         break;
+      case 0b1011:  // MULT (Multiplication)
+        result = a * b;
+        break;
       // If your system has SRL (Shift Right Logical) add the case here
       // Add other cases as needed for the instructions you're implementing
       default:
@@ -81,6 +94,27 @@ public:
         break;
     }
 
+    zero_flag = (result == 0);
+    return result;
+  }
+
+  auto performFloatOperation() -> float
+  {
+    float result = 0;
+    switch (alu_ctr.to_ulong()) {
+      case 0b1100:  // DIV (Division)
+        result = float(a) / float(b);
+        break;
+      case 0b1101:  // SQR (Square Root)
+        result = sqrt(p);
+        break;
+      case 0b1110:  // FISQR (Fast Inverse Square Root)
+        result = q_rsqrt(p);
+        break;
+      default:
+        result = 0;
+        break;
+    }
     zero_flag = (result == 0);
     return result;
   }

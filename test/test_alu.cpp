@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <pipeline_project/alu.hpp>
+#include <pipeline_project/utils.hpp>
 
 TEST(TestALU, Addition)
 {
@@ -231,6 +232,76 @@ TEST(TestALU, ShiftRightArithmeticLargerPositive)
   ALU alu;
   alu.setInputs(0x7FFFFFFF, 1, std::bitset<4>("1010"));
   ASSERT_EQ(alu.performOperation(), 0x3FFFFFFF);
+  ASSERT_FALSE(alu.isZero());
+  ASSERT_FALSE(alu.hasOverflow());
+  ASSERT_FALSE(alu.hasCarryOut());
+}
+
+TEST(TestALU, Multiplication)
+{
+  ALU alu;
+  alu.setInputs(7, 5, std::bitset<4>(0b1011));  // Multiplication
+  ASSERT_EQ(alu.performOperation(), 35);
+  ASSERT_FALSE(alu.isZero());
+  ASSERT_FALSE(alu.hasOverflow());
+  ASSERT_FALSE(alu.hasCarryOut());
+
+  alu.setInputs(3, 3, std::bitset<4>(0b1011));
+  ASSERT_EQ(alu.performOperation(), 9);
+  ASSERT_FALSE(alu.isZero());
+  ASSERT_FALSE(alu.hasOverflow());
+  ASSERT_FALSE(alu.hasCarryOut());
+}
+
+TEST(TestALU, Division)
+{
+  ALU alu;
+  alu.setInputs(15, 3, std::bitset<4>(0b1100));  // Division
+  ASSERT_EQ(alu.performFloatOperation(), 5);
+  ASSERT_FALSE(alu.isZero());
+  ASSERT_FALSE(alu.hasOverflow());
+  ASSERT_FALSE(alu.hasCarryOut());
+
+  alu.setInputs(3, 3, std::bitset<4>(0b1100));
+  ASSERT_EQ(alu.performFloatOperation(), 1);
+  ASSERT_FALSE(alu.isZero());
+  ASSERT_FALSE(alu.hasOverflow());
+  ASSERT_FALSE(alu.hasCarryOut());
+
+  alu.setInputs(1, 2, std::bitset<4>(0b1100));
+  ASSERT_EQ(alu.performFloatOperation(), 0.5);
+  ASSERT_FALSE(alu.isZero());
+  ASSERT_FALSE(alu.hasOverflow());
+  ASSERT_FALSE(alu.hasCarryOut());
+}
+
+TEST(TestALU, SquareRoot)
+{
+  ALU alu;
+  alu.setFloatInput(9, std::bitset<4>(0b1101));  // Square Root
+  ASSERT_EQ(alu.performFloatOperation(), 3);
+  ASSERT_FALSE(alu.isZero());
+  ASSERT_FALSE(alu.hasOverflow());
+  ASSERT_FALSE(alu.hasCarryOut());
+
+  alu.setFloatInput(1525225, std::bitset<4>(0b1101));
+  ASSERT_EQ(alu.performFloatOperation(), 1235);
+  ASSERT_FALSE(alu.isZero());
+  ASSERT_FALSE(alu.hasOverflow());
+  ASSERT_FALSE(alu.hasCarryOut());
+}
+
+TEST(TestALU, FastInverseSquareRoot)
+{
+  ALU alu;
+  alu.setFloatInput(0.01234567901, std::bitset<4>(0b1110));  // Fast Inverse Square Root
+  ASSERT_TRUE(almostEqual(alu.performFloatOperation(), 8.99679));
+  ASSERT_FALSE(alu.isZero());
+  ASSERT_FALSE(alu.hasOverflow());
+  ASSERT_FALSE(alu.hasCarryOut());
+
+  alu.setFloatInput(3211, std::bitset<4>(0b1110));
+  ASSERT_TRUE(almostEqual(alu.performFloatOperation(), 0.0176398));
   ASSERT_FALSE(alu.isZero());
   ASSERT_FALSE(alu.hasOverflow());
   ASSERT_FALSE(alu.hasCarryOut());
